@@ -149,6 +149,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         ANCHORED
     }
     private SlideState mSlideState = SlideState.COLLAPSED;
+    private static final String DEFAULT_SLIDE_STATE = "collapsed";
 
     /**
      * How far the panel is offset from its expanded position.
@@ -285,6 +286,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
 
                 mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
+
+                String initialState =
+                        ta.getString(R.styleable.SlidingUpPanelLayout_initialState);
+                if (initialState == null) {
+                    initialState = DEFAULT_SLIDE_STATE;
+                }
+                mSlideState = SlideState.valueOf(initialState.toUpperCase());
             }
 
             ta.recycle();

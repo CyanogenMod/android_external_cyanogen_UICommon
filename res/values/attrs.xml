@@ -8,5 +8,6 @@
         <attr name="flingVelocity" format="integer" />
         <attr name="dragView" format="reference" />
         <attr name="overlay" format="boolean"/>
+        <attr name="initialState" format="string"/>
     </declare-styleable>
 </resources>
