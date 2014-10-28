@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.cyngn.uicommon.view.ExpandingCard
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/expandingCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/expanding_card_color">
+
+    <FrameLayout
+            android:id="@+id/shadowView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/bg_contact_card"/>
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp">
+        <FrameLayout
+                android:id="@+id/auxiliaryView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/expanding_card_aux_height"
+                android:background="@color/expanding_card_color"
+                android:layout_gravity="bottom"/>
+
+        <FrameLayout
+                android:id="@+id/mainView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/expanding_card_color"/>
+    </FrameLayout>
+</com.cyngn.uicommon.view.ExpandingCard>
