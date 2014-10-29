@@ -310,10 +310,12 @@ public class SlidingListLayout extends FrameLayout implements AbsListView.OnScro
      * @param dy
      */
     private void scrollListByOffset(float dy) {
-        int topPos = mList.getFirstVisiblePosition();
-        int topOffset = mList.getChildAt(0).getTop();
-        int newOffset = topOffset + (int)dy;
-        mList.setSelectionFromTop(topPos, newOffset);
+        if (mList.getChildCount() > 0) {
+            int topPos = mList.getFirstVisiblePosition();
+            int topOffset = mList.getChildAt(0).getTop();
+            int newOffset = topOffset + (int) dy;
+            mList.setSelectionFromTop(topPos, newOffset);
+        }
     }
 
     /**
