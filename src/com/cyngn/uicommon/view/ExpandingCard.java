@@ -109,6 +109,8 @@ public class ExpandingCard extends FrameLayout {
                 new TopMarginSetter().setMargin(mAuxView, bottom);
                 mMainView.setBackgroundColor(mColorSelected);
                 mAuxView.setBackgroundColor(mColorSelected);
+                new TopMarginSetter().setMargin(mShadowView, 0);
+                new BottomMarginSetter().setMargin(mShadowView, 0);
                 break;
         }
 
