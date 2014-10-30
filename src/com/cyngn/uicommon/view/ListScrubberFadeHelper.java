@@ -21,6 +21,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
+import com.cyngn.uicommon.animation.FadeUtil;
+import com.cyngn.uicommon.view.ListScrubber.ListScrubberListener;
 
 /**
  * State machine to manage fading the list scrubber in and out when the user interacts
@@ -51,6 +53,7 @@ public class ListScrubberFadeHelper {
     private Handler mHandler;
     private Runnable mFadeOutRunnable;
     private State mState;
+    private ListScrubberListener mListener;
 
     class FadeOutRunnable implements Runnable {
         @Override
@@ -102,19 +105,29 @@ public class ListScrubberFadeHelper {
             case VISIBLE:
                 mScrubber.setAlpha(1f);
                 mScrubber.setVisibility(View.VISIBLE);
+                if (mListener != null) {
+                    mListener.onAppeared();
+                }
                 break;
             case HIDDEN:
                 mScrubber.setAlpha(0f);
                 mScrubber.setVisibility(View.INVISIBLE);
+                if (mListener != null) {
+                    mListener.onDisappeared();
+                }
                 break;
             case FADING_IN:
-                mScrubber.animate().alpha(1f).setDuration(200)
+                if (mListener != null) {
+                    mListener.onAppearing();
+                }
+                mScrubber.animate().alpha(1f).setDuration(FadeUtil.DEFAULT_FADE_DURATION)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 // strange that this is required...
                                 updateState(State.VISIBLE);
                             }
+
                             @Override
                             public void onAnimationCancel(Animator animation) {
                                 updateState(State.VISIBLE);
@@ -122,7 +135,10 @@ public class ListScrubberFadeHelper {
                         });
                 break;
             case FADING_OUT:
-                mScrubber.animate().alpha(0f).setDuration(200)
+                if (mListener != null) {
+                    mListener.onDisappearing();
+                }
+                mScrubber.animate().alpha(0f).setDuration(FadeUtil.DEFAULT_FADE_DURATION)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -148,5 +164,9 @@ public class ListScrubberFadeHelper {
             mFadeOutRunnable = null;
         }
         mScrubber.animate().cancel();
+    }
+
+    public void setListScrubberListener(ListScrubberListener listener) {
+        mListener = listener;
     }
 }

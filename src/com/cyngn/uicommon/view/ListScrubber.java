@@ -54,6 +54,47 @@ public class ListScrubber extends LinearLayout implements OnClickListener {
     private int mHeaderCount = 0;
     private boolean mFadeInOnMotion;
     private ListScrubberFadeHelper mFadeHelper;
+    private ListScrubberListener mListener;
+
+    public static interface ListScrubberListener {
+
+        /**
+         * Called when list scrubber is beginning to fade in
+         */
+        public void onAppearing();
+
+        /**
+         * List scrubber is fully visible
+         */
+        public void onAppeared();
+
+        /**
+         * Called when list scrubber is beginning to fade out
+         */
+        public void onDisappearing();
+
+        /**
+         * List scrubber is fully gone
+         */
+        public void onDisappeared();
+    }
+
+    /**
+     * Convenience implementation of list scrubber listener that does nothing
+     */
+    public static class DefaultListScrubberListener implements ListScrubberListener {
+        @Override
+        public void onDisappeared() {}
+
+        @Override
+        public void onDisappearing() {}
+
+        @Override
+        public void onAppeared() {}
+
+        @Override
+        public void onAppearing() {}
+    }
 
     public ListScrubber(Context context) {
         super(context);
@@ -187,6 +228,7 @@ public class ListScrubber extends LinearLayout implements OnClickListener {
     public void setFadeInOnMotion(boolean fadeInOnMotion) {
         if (fadeInOnMotion) {
             mFadeHelper = new ListScrubberFadeHelper(mScrubberWidget);
+            mFadeHelper.setListScrubberListener(mListener);
             mFadeHelper.updateState(ListScrubberFadeHelper.State.HIDDEN);
         }
         else {
@@ -229,5 +271,12 @@ public class ListScrubber extends LinearLayout implements OnClickListener {
 
     public void setHeaderCount(int count) {
         mHeaderCount = count;
+    }
+
+    public void setListScrubberListener(ListScrubberListener listener) {
+        mListener = listener;
+        if (mFadeHelper != null) {
+            mFadeHelper.setListScrubberListener(listener);
+        }
     }
 }
