@@ -39,17 +39,16 @@ public class ExpandingCard extends FrameLayout {
     }
 
     private View mExpandingCard;
+    private View mContainerView;
     private View mMainView;
     private View mAuxView;
-    private View mShadowView;
 
     private int mAuxTop = -1;
     private int mAuxHeight;
     private int mMainBottom = -1;
     private int mColor;
     private int mColorSelected;
-    private int mShadowMarginTop;
-    private int mShadownMarginBottom;
+    private int mCardElevation;
 
     public ExpandingCard(Context context) {
         super(context);
@@ -68,18 +67,16 @@ public class ExpandingCard extends FrameLayout {
         super.onFinishInflate();
 
         mExpandingCard = findViewById(R.id.expandingCard);
+        mContainerView = findViewById(R.id.containerView);
+        ViewUtil.addRectangularOutlineProvider(mContainerView);
         mMainView = findViewById(R.id.mainView);
         mAuxView = findViewById(R.id.auxiliaryView);
-        mShadowView = findViewById(R.id.shadowView);
 
         Resources res = getResources();
         mAuxHeight = res.getDimensionPixelSize(R.dimen.expanding_card_aux_height);
+        mCardElevation = res.getDimensionPixelSize(R.dimen.expanding_card_elevation);
         mColor = res.getColor(R.color.expanding_card_color);
         mColorSelected = res.getColor(R.color.expanding_card_selected_color);
-
-        MarginLayoutParams lp = (MarginLayoutParams)mShadowView.getLayoutParams();
-        mShadowMarginTop = lp.topMargin;
-        mShadownMarginBottom = lp.bottomMargin;
     }
 
     /**
@@ -109,15 +106,14 @@ public class ExpandingCard extends FrameLayout {
                 new TopMarginSetter().setMargin(mAuxView, bottom);
                 mMainView.setBackgroundColor(mColorSelected);
                 mAuxView.setBackgroundColor(mColorSelected);
-                new TopMarginSetter().setMargin(mShadowView, 0);
-                new BottomMarginSetter().setMargin(mShadowView, 0);
+                mContainerView.setTranslationZ(mCardElevation);
                 break;
         }
 
         if (anim != null) {
             List<Animator> animations = getColorAnimations(mColor, mColorSelected);
             animations.add(anim);
-            animations.addAll(getShadowAnimations(true));
+            animations.add(getShadowAnimation(true));
 
             AnimatorSet set = new AnimatorSet();
             set.playTogether(animations);
@@ -165,7 +161,7 @@ public class ExpandingCard extends FrameLayout {
             });
 
             List<Animator> animations = getColorAnimations(mColorSelected, mColor);
-            animations.addAll(getShadowAnimations(false));
+            animations.add(getShadowAnimation(false));
             animations.add(anim);
 
             AnimatorSet set = new AnimatorSet();
@@ -208,31 +204,19 @@ public class ExpandingCard extends FrameLayout {
      * @param isExpand
      * @return
      */
-    private List<Animator> getShadowAnimations(boolean isExpand) {
-        int fromTop, toTop, fromBottom, toBottom;
-        if (isExpand) {
-            fromTop = mShadowMarginTop;
-            toTop = 0;
-            fromBottom = mShadownMarginBottom;
-            toBottom = 0;
-        } else {
-            fromTop = 0;
-            toTop = mShadowMarginTop;
-            fromBottom = 0;
-            toBottom = mShadownMarginBottom;
-        }
+    private Animator getShadowAnimation(boolean isExpand) {
+        float fromElevation = isExpand ? 0 : mCardElevation;
+        float toElevation = mCardElevation - fromElevation;
 
-        List<Animator> result = new ArrayList<Animator>();
-
-        ValueAnimator topAnim = ValueAnimator.ofInt(fromTop, toTop);
-        topAnim.addUpdateListener(new MarginTwiddler(mShadowView, new TopMarginSetter()));
-        result.add(topAnim);
-
-        ValueAnimator bottomAnim = ValueAnimator.ofInt(fromBottom, toBottom);
-        bottomAnim.addUpdateListener(new MarginTwiddler(mShadowView, new BottomMarginSetter()));
-        result.add(bottomAnim);
-
-        return result;
+        ValueAnimator anim = ValueAnimator.ofFloat(fromElevation, toElevation);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                mContainerView.setTranslationZ((Float)animator.getAnimatedValue());
+                mContainerView.requestLayout();
+            }
+        });
+        return anim;
     }
 
     /**
@@ -240,11 +224,10 @@ public class ExpandingCard extends FrameLayout {
      */
     public void reset() {
         resetColors();
+        mContainerView.setTranslationZ(0);
         mAuxView.setVisibility(View.GONE);
         new BottomMarginSetter().setMargin(mMainView, 0);
         new TopMarginSetter().setMargin(mAuxView, 0);
-        new BottomMarginSetter().setMargin(mShadowView, mShadownMarginBottom);
-        new TopMarginSetter().setMargin(mShadowView, mShadowMarginTop);
         mAuxTop = -1;
         mMainBottom = -1;
     }
