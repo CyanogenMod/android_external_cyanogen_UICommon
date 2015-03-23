@@ -111,6 +111,16 @@ public class SlidingListLayout extends FrameLayout implements AbsListView.OnScro
         mFlingCalculator = new FlingCalculator(context);
     }
 
+    /**
+     * Allows for the Y-offset to be set at runtime; for cases wherein offset is dynamic
+     * @param offset new offset
+     */
+    public void setInitialYOffset(float offset) {
+        mInitialTranslateY = offset;
+        // allow for re-calculation of offset-dependent params
+        mFirstLayout = true;
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
