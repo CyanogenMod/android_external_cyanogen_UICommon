@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import com.cyngn.uicommon.R;
@@ -24,6 +25,13 @@ import java.util.List;
 public class ExpandingCard extends FrameLayout {
 
     private static final int EXPAND_DURATION = 150;
+    private ListView mList;
+    private ViewGroup mRowContainer;
+    private boolean mRowContainerInitialized;
+
+    public void setListView(ListView listView) {
+        mList = listView;
+    }
 
     public static enum AnimationType {
         // the bottom of the aux view is anchored and the content view slides
@@ -114,6 +122,38 @@ public class ExpandingCard extends FrameLayout {
             List<Animator> animations = getColorAnimations(mColor, mColorSelected);
             animations.add(anim);
             animations.add(getShadowAnimation(true));
+
+            if (mList != null && mRowContainer != null) {
+                // Set up the animator to animate the expansion and shadow depth.
+                ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+                int scrollingNeeded = 0;
+
+                if (mRowContainer.getTop() < 0) {
+                    scrollingNeeded = mRowContainer.getTop(); // view at top/partially visible
+                } else {
+                    int listViewHeight = mList.getHeight();
+                    int offset = mRowContainer.getTop() + mRowContainer.getHeight() + mAuxHeight - listViewHeight;
+                    if (offset > 0) {
+                        scrollingNeeded = offset;
+                    }
+                }
+                final int finalScrollingNeeded = scrollingNeeded;
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+                    private int mCurrentScroll = 0;
+
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animator) {
+                        Float value = (Float) animator.getAnimatedValue();
+                        if (mList != null) {
+                            int scrollBy = (int) (value * finalScrollingNeeded) - mCurrentScroll;
+                            mList.smoothScrollBy(scrollBy, /* duration = */ 0);
+                            mCurrentScroll += scrollBy;
+                        }
+                    }
+                });
+                animations.add(animator);
+            }
 
             AnimatorSet set = new AnimatorSet();
             set.playTogether(animations);
@@ -321,6 +361,7 @@ public class ExpandingCard extends FrameLayout {
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    card.initializeRowContainer();
                     if (position == mSelectedPosition) {
                         card.collapse();
                         mSelectedPosition = -1;
@@ -356,5 +397,19 @@ public class ExpandingCard extends FrameLayout {
                 card.expand(AnimationType.NONE);
             }
         }
+    }
+
+    private void initializeRowContainer() {
+        if (!mRowContainerInitialized) {
+            ViewGroup lastView = (ViewGroup) getParent();
+            while (lastView != null) {
+                if (lastView.getParent() instanceof ListView) {
+                    mRowContainer = lastView;
+                    break;
+                }
+                lastView = (ViewGroup) lastView.getParent();
+            }
+        }
+        mRowContainerInitialized = true;
     }
 }
