@@ -4,27 +4,21 @@
         android:id="@+id/expandingCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="2dp"
-        android:paddingBottom="4dp"
-        android:clipChildren="false"
-        android:clipToPadding="false"
         android:background="@color/expanding_card_color">
 
     <FrameLayout
             android:id="@+id/containerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
         <FrameLayout
                 android:id="@+id/auxiliaryView"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/expanding_card_aux_height"
-                android:background="@color/expanding_card_color"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom"/>
 
         <FrameLayout
                 android:id="@+id/mainView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/expanding_card_color"/>
+                android:layout_height="wrap_content"/>
     </FrameLayout>
 </com.cyngn.uicommon.view.ExpandingCard>
