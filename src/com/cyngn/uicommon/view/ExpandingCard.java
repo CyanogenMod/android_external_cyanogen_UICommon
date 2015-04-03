@@ -3,6 +3,7 @@ package com.cyngn.uicommon.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -361,7 +362,7 @@ public class ExpandingCard extends FrameLayout {
      * handler to manage expanding/collpasing.
      */
     public static class ExpandingCardManager {
-        private long mSelectedCardId = -1;
+        private int mSelectedPosition = -1;
         private ExpandingCard mSelectedCard;
         private ListView mList;
 
@@ -374,22 +375,22 @@ public class ExpandingCard extends FrameLayout {
          * in the list
          *
          * @param card
-         * @param cardId
+         * @param position
          */
-        public void onBindExpandingCard(final ExpandingCard card, final long cardId) {
+        public void onBindExpandingCard(final ExpandingCard card, final int position) {
             card.reset();
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (cardId == mSelectedCardId) {
+                    if (position == mSelectedPosition) {
                         card.collapse();
-                        mSelectedCardId = -1;
+                        mSelectedPosition = -1;
                         mSelectedCard = null;
                     } else {
                         // when the selection is moved from one card to another, we want the
                         // newly selected card to expand into the space left by the collpasing
                         // one.
-                        if (mSelectedCardId >= 0 && cardId > mSelectedCardId) {
+                        if (mSelectedPosition >= 0 && position > mSelectedPosition) {
                             card.expand(AnimationType.ANCHOR_BOTTOM);
                         } else {
                             card.expand(AnimationType.ANCHOR_TOP);
@@ -398,18 +399,18 @@ public class ExpandingCard extends FrameLayout {
                         // If the currently selected card is in view, animate it closing.
                         // We're assuming that our reference to the selected card view is still
                         // valid is long as it is visible.
-                        if (mSelectedCardId >= mList.getFirstVisiblePosition() &&
-                                mSelectedCardId <= mList.getLastVisiblePosition() &&
+                        if (mSelectedPosition >= mList.getFirstVisiblePosition() &&
+                                mSelectedPosition <= mList.getLastVisiblePosition() &&
                                 mSelectedCard != null) {
                             mSelectedCard.collapse();
                         }
 
-                        mSelectedCardId = cardId;
+                        mSelectedPosition = position;
                         mSelectedCard = card;
                     }
                 }
             });
-            if (cardId == mSelectedCardId) {
+            if (position == mSelectedPosition) {
                 // selected card is coming back into view on a scroll, show selected
                 // state without animation
                 mSelectedCard = card;
