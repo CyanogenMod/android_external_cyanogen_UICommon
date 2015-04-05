@@ -376,7 +376,7 @@ public class ExpandingCard extends FrameLayout {
          * @param card
          * @param cardId
          */
-        public void onBindExpandingCard(final ExpandingCard card, final long cardId) {
+        public void onBindExpandingCard(final ExpandingCard card, final long cardId, final int position) {
             card.reset();
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -386,10 +386,20 @@ public class ExpandingCard extends FrameLayout {
                         mSelectedCardId = -1;
                         mSelectedCard = null;
                     } else {
+                        int selectedCardPosition = -1;
                         // when the selection is moved from one card to another, we want the
                         // newly selected card to expand into the space left by the collpasing
                         // one.
-                        if (mSelectedCardId >= 0 && cardId > mSelectedCardId) {
+                        if (mSelectedCardId >= 0) {
+                            for (int i = mList.getFirstVisiblePosition(); i <= mList.getLastVisiblePosition(); i++) {
+                                long id = mList.getAdapter().getItemId(i);
+                                if (id == mSelectedCardId) {
+                                    selectedCardPosition = i;
+                                    break;
+                                }
+                            }
+                        }
+                        if (position > selectedCardPosition) {
                             card.expand(AnimationType.ANCHOR_BOTTOM);
                         } else {
                             card.expand(AnimationType.ANCHOR_TOP);
@@ -398,9 +408,7 @@ public class ExpandingCard extends FrameLayout {
                         // If the currently selected card is in view, animate it closing.
                         // We're assuming that our reference to the selected card view is still
                         // valid is long as it is visible.
-                        if (mSelectedCardId >= mList.getFirstVisiblePosition() &&
-                                mSelectedCardId <= mList.getLastVisiblePosition() &&
-                                mSelectedCard != null) {
+                        if (mSelectedCard != null && selectedCardPosition >= 0) {
                             mSelectedCard.collapse();
                         }
 
