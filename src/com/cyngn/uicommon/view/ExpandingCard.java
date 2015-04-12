@@ -59,7 +59,6 @@ public class ExpandingCard extends FrameLayout {
     private View mAuxView;
 
     private int mAuxTop = -1;
-    private int mAuxHeight;
     private int mMainBottom = -1;
     private ColorDrawable mColor;
     private GradientDrawable mColorSelected;
@@ -88,7 +87,6 @@ public class ExpandingCard extends FrameLayout {
         mAuxView = findViewById(R.id.auxiliaryView);
 
         Resources res = getResources();
-        mAuxHeight = res.getDimensionPixelSize(R.dimen.expanding_card_aux_height);
         mCardElevation = res.getDimensionPixelSize(R.dimen.expanding_card_elevation);
         mColor = new ColorDrawable(res.getColor(R.color.expanding_card_color));
         mColorSelected = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
@@ -103,8 +101,8 @@ public class ExpandingCard extends FrameLayout {
     public void expand(AnimationType type) {
         mAuxView.setVisibility(View.VISIBLE);
 
-        int mid = getAuxTop();
-        int bottom = getMainBottom();
+        int mid = mMainView.getHeight() - mAuxView.getHeight();
+        int bottom = mMainView.getHeight();
 
         ValueAnimator anim = null;
         switch(type) {
@@ -142,7 +140,8 @@ public class ExpandingCard extends FrameLayout {
                     scrollingNeeded = mRowContainer.getTop(); // view at top/partially visible
                 } else {
                     int listViewHeight = mList.getHeight();
-                    int offset = mRowContainer.getTop() + mRowContainer.getHeight() + mAuxHeight - listViewHeight;
+                    int offset = mRowContainer.getTop() + mRowContainer.getHeight()
+                            + mAuxView.getHeight() - listViewHeight;
                     if (offset > 0) {
                         scrollingNeeded = offset;
                     }
@@ -224,13 +223,13 @@ public class ExpandingCard extends FrameLayout {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mAuxView.setVisibility(View.GONE);
+                    mAuxView.setVisibility(View.INVISIBLE);
                 }
             });
             set.start();
         } else {
             // layouts are already collapsed.  reset colors/visibility for completeness
-            mAuxView.setVisibility(View.GONE);
+            mAuxView.setVisibility(View.INVISIBLE);
             resetColors();
         }
     }
@@ -286,7 +285,7 @@ public class ExpandingCard extends FrameLayout {
         if (mRowContainer != null) {
             mRowContainer.setTranslationZ(0);
         }
-        mAuxView.setVisibility(View.GONE);
+        mAuxView.setVisibility(View.INVISIBLE);
         new BottomMarginSetter().setMargin(mMainView, 0);
         new TopMarginSetter().setMargin(mAuxView, 0);
         mAuxTop = -1;
@@ -313,22 +312,6 @@ public class ExpandingCard extends FrameLayout {
             mMarginSetter.setMargin(mView, val);
             mExpandingCard.requestLayout();
         }
-    }
-
-    private int getAuxTop() {
-        if (mAuxTop < 0) {
-            mAuxTop = getMainBottom() - mAuxHeight;
-        }
-        return mAuxTop;
-    }
-
-    private int getMainBottom() {
-        if (mMainBottom < 0) {
-            // assumption: main view is bigger than aux view.  We could use getBottom here,
-            // but getHeight seems more robust since the height never changes
-            mMainBottom = mMainView.getHeight();
-        }
-        return mMainBottom;
     }
 
     private static interface MarginSetter {
@@ -399,7 +382,7 @@ public class ExpandingCard extends FrameLayout {
                                 }
                             }
                         }
-                        if (position > selectedCardPosition) {
+                        if (selectedCardPosition != -1 && position > selectedCardPosition) {
                             card.expand(AnimationType.ANCHOR_BOTTOM);
                         } else {
                             card.expand(AnimationType.ANCHOR_TOP);

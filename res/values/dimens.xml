@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="expanding_card_aux_height">50dp</dimen>
     <dimen name="expanding_card_elevation">5dp</dimen>
 </resources>
