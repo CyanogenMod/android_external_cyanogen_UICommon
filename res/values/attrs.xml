@@ -14,4 +14,25 @@
     <declare-styleable name="SlidingListLayout">
         <attr name="initialOffset" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="RoundedCornerImageView">
+
+        <!-- These only get used if shape is rectangle -->
+        <attr name="roundTopLeft" format="boolean" />
+        <attr name="roundTopRight" format="boolean" />
+        <attr name="roundBottomLeft" format="boolean" />
+        <attr name="roundBottomRight" format="boolean" />
+
+        <!-- Radius is used for both shapes -->
+        <attr name="radius" format="dimension" />
+
+        <!-- Shape Settings -->
+        <attr name="shape" format="enum">
+
+            <!-- Possible Shapes -->
+            <enum name="rectangle" value="1" />
+            <enum name="circle" value="2" />
+
+        </attr>
+    </declare-styleable>
 </resources>
