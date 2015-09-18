@@ -90,7 +90,7 @@ public class ExpandingCard extends FrameLayout {
         mCardElevation = res.getDimensionPixelSize(R.dimen.expanding_card_elevation);
         mColor = new ColorDrawable(res.getColor(R.color.expanding_card_color));
         mColorSelected = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
-                new int[]{res.getColor(R.color.expanding_card_start_gradient), Color.WHITE});
+                new int[]{res.getColor(R.color.expanding_card_start_gradient), res.getColor(R.color.expanding_card_selected_color)});
     }
 
     /**
