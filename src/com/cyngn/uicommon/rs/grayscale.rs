@@ -4,7 +4,7 @@
 
 uchar4 __attribute__((kernel)) grayscale(uchar4 pixelIn, uint32_t x, uint32_t y) {
  
-    uchar grayscale = pixelIn.r * 0.299 + pixelIn.g * 0.587 + pixelIn.b * 0.114;
+    uchar grayscale = pixelIn.r * 0.299f + pixelIn.g * 0.587f + pixelIn.b * 0.114f;
     uchar4 pixelOut;
 
     pixelOut.a = pixelIn.a;
