@@ -29,8 +29,6 @@ import com.cyngn.uicommon.R;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
-    public static final int blah = 3;
-
     private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
 
     /**
@@ -735,10 +733,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 break;
             }
         }
+        boolean interceptForDrag = false;
+         try {
+             interceptForDrag = mDragHelper.shouldInterceptTouchEvent(ev);
+         } catch (ArrayIndexOutOfBoundsException e) {
+             // Do nothing;
+         }
 
-        final boolean interceptForDrag = mDragHelper.shouldInterceptTouchEvent(ev);
-
-        return interceptForDrag;
+        return interceptForDrag || interceptTap;
     }
 
     @Override
