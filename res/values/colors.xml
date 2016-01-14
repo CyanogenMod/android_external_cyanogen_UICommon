@@ -2,4 +2,5 @@
     <color name="expanding_card_color">#f5f5f5</color>
     <color name="expanding_card_selected_color">#ffffff</color>
     <color name="expanding_card_start_gradient">#fafafa</color>
+    <color name="snackbar_background_color">#323232</color>
 </resources>
