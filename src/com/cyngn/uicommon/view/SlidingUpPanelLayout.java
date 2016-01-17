@@ -735,8 +735,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 break;
             }
         }
-
-        final boolean interceptForDrag = mDragHelper.shouldInterceptTouchEvent(ev);
+        boolean interceptForDrag = false;
+         try {
+             interceptForDrag = mDragHelper.shouldInterceptTouchEvent(ev);
+         } catch (ArrayIndexOutOfBoundsException e) {
+             // Do nothing;
+         }
 
         return interceptForDrag;
     }
