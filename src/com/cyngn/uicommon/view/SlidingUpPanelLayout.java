@@ -740,7 +740,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
              // Do nothing;
          }
 
-        return interceptForDrag || interceptTap;
+        return interceptForDrag;
     }
 
     @Override
