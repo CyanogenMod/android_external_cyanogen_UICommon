@@ -167,12 +167,35 @@ public final class Snackbar {
     private int mDuration;
     private Callback mCallback;
 
-    private Snackbar(ViewGroup parent) {
+    private Snackbar(ViewGroup parent, int maxLines) {
         mParent = parent;
         mContext = parent.getContext();
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         mView = (SnackbarLayout) inflater.inflate(R.layout.layout_snackbar, mParent, false);
+        mView.setMaxLines(maxLines);
+    }
+
+    /**
+     * Make a Snackbar to display a message
+     *
+     * <p>Snackbar will try and find a parent view to hold Snackbar's view from the value given
+     * to {@code view}. Snackbar will walk up the view tree trying to find the window decor's
+     * content view.
+     *
+     *
+     * @param view     The view to find a parent from.
+     * @param text     The text to show.  Can be formatted text.
+     * @param duration How long to display the message.  Either {@link #LENGTH_SHORT} or {@link
+     *                 #LENGTH_LONG}
+     * @param maxLines The maximum lines of the message text.
+     */
+    public static Snackbar make(View view, CharSequence text,
+            @Duration int duration, int maxLines) {
+        Snackbar snackbar = new Snackbar(findSuitableParent(view), maxLines);
+        snackbar.setText(text);
+        snackbar.setDuration(duration);
+        return snackbar;
     }
 
     /**
@@ -190,10 +213,8 @@ public final class Snackbar {
      */
     public static Snackbar make(View view, CharSequence text,
             @Duration int duration) {
-        Snackbar snackbar = new Snackbar(findSuitableParent(view));
-        snackbar.setText(text);
-        snackbar.setDuration(duration);
-        return snackbar;
+        return make(view, text, duration,
+                view.getResources().getInteger(R.integer.config_snackbar_text_max_lines));
     }
 
     /**
@@ -212,6 +233,10 @@ public final class Snackbar {
      */
     public static Snackbar make(View view, int resId, @Duration int duration) {
         return make(view, view.getResources().getText(resId), duration);
+    }
+
+    public static Snackbar make(View view, int resId, @Duration int duration, int maxlines) {
+        return make(view, view.getResources().getText(resId), duration, maxlines);
     }
 
     private static ViewGroup findSuitableParent(View view) {
@@ -523,6 +548,10 @@ public final class Snackbar {
             super.onFinishInflate();
             mMessageView = (TextView) findViewById(R.id.snackbar_text);
             mActionView = (Button) findViewById(R.id.snackbar_action);
+        }
+
+        void setMaxLines(int maxLines) {
+            mMessageView.setMaxLines(maxLines);
         }
 
         TextView getMessageView() {
