@@ -533,7 +533,7 @@ public final class Snackbar {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SnackbarLayout);
             mMaxWidth = a.getDimensionPixelSize(R.styleable.SnackbarLayout_android_maxWidth, -1);
             mMaxInlineActionWidth = a.getDimensionPixelSize(
-                    R.styleable.SnackbarLayout_maxActionInlineWidth, -1);
+                    R.styleable.SnackbarLayout_uicommon_maxActionInlineWidth, -1);
             if (a.hasValue(R.styleable.SnackbarLayout_android_elevation)) {
                 setElevation(a.getDimensionPixelSize(
                         R.styleable.SnackbarLayout_android_elevation, 0));
