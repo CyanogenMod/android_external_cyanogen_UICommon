@@ -37,7 +37,7 @@ import android.widget.TextView;
  *
  * TODO: include attributes to customize the style of selected/unselected tabs
  */
-public class PagerFixedTabStrip extends LinearLayout implements ViewPager.Decor {
+public class PagerFixedTabStrip extends LinearLayout {
 
     private PageListener mPageListener = new PageListener();
     private ViewPager mPager;
